@@ -1,13 +1,13 @@
 import { Given, Then, When } from "@cucumber/cucumber";
 import { expect } from "expect";
-import type { PortalWorld } from "./world";
+import type { CockpitWorld } from "./world";
 import { featureFile, slug } from "./written";
 
 const OTHER_SCENARIO = "Paying with the only saved card";
 
 Given(
   "the default branch holds the feature {string} with the id {string} in the domain {string}",
-  function (this: PortalWorld, title: string, id: string, domain: string) {
+  function (this: CockpitWorld, title: string, id: string, domain: string) {
     this.holds(`features/${domain}/${id}.feature`, featureFile({ title, id }));
   },
 );
@@ -15,7 +15,7 @@ Given(
 Given(
   "the default branch holds {string} in {string}, {string} in {string} and {string} in {string}",
   function (
-    this: PortalWorld,
+    this: CockpitWorld,
     first: string,
     firstDomain: string,
     second: string,
@@ -36,7 +36,7 @@ Given(
 
 Given(
   "the default branch holds the feature {string} with a narrative, a rule and two scenarios",
-  function (this: PortalWorld, title: string) {
+  function (this: CockpitWorld, title: string) {
     const written = [
       "  As a returning customer",
       "  I pay with a card I saved before",
@@ -64,14 +64,14 @@ Given(
 
 Given(
   "the default branch holds the feature {string} without an id",
-  function (this: PortalWorld, title: string) {
+  function (this: CockpitWorld, title: string) {
     this.holds(`features/payments/${slug(title)}.feature`, featureFile({ title, id: null }));
   },
 );
 
 Given(
   "the default branch holds {string}, which is not a readable feature",
-  function (this: PortalWorld, path: string) {
+  function (this: CockpitWorld, path: string) {
     this.holds(`features/${path}`, "Refunds are not written yet.\n  Given nothing is refunded\n");
   },
 );
@@ -80,14 +80,14 @@ Given("the default branch holds no features", () => {});
 
 Given(
   "the default branch holds the feature {string} tagged {string}",
-  function (this: PortalWorld, title: string, tag: string) {
+  function (this: CockpitWorld, title: string, tag: string) {
     this.holds(`features/rewards/${slug(title)}.feature`, featureFile({ title, tags: [tag] }));
   },
 );
 
 Given(
   "the default branch holds the feature {string} tagged {string} with the scenario {string}",
-  function (this: PortalWorld, title: string, tag: string, scenario: string) {
+  function (this: CockpitWorld, title: string, tag: string, scenario: string) {
     const body = [`  Scenario: ${scenario}`, "    Then points are earned"];
     this.holds(
       `features/rewards/${slug(title)}.feature`,
@@ -98,7 +98,7 @@ Given(
 
 Given(
   "the feature {string} holds the scenario {string} tagged {string}",
-  function (this: PortalWorld, title: string, scenario: string, tag: string) {
+  function (this: CockpitWorld, title: string, scenario: string, tag: string) {
     const body = [
       `  Scenario: ${OTHER_SCENARIO}`,
       "    Then the saved card is charged",
@@ -111,18 +111,18 @@ Given(
   },
 );
 
-When("I open the portal", async function (this: PortalWorld) {
+When("I open the cockpit", async function (this: CockpitWorld) {
   await this.open();
 });
 
-When("I read {string}", async function (this: PortalWorld, title: string) {
+When("I read {string}", async function (this: CockpitWorld, title: string) {
   await this.open();
   await this.page().getByRole("link", { name: title }).click();
 });
 
 Then(
   "I see {string} listed with {string} and {string}",
-  async function (this: PortalWorld, title: string, id: string, domain: string) {
+  async function (this: CockpitWorld, title: string, id: string, domain: string) {
     const listed = this.page().getByRole("listitem").filter({ hasText: title });
     await listed.getByText(id, { exact: true }).waitFor();
     await listed.getByText(domain, { exact: true }).waitFor();
@@ -132,7 +132,7 @@ Then(
 Then(
   "I see one list: {string} in {string}, {string} in {string}, then {string} in {string}",
   async function (
-    this: PortalWorld,
+    this: CockpitWorld,
     first: string,
     firstDomain: string,
     second: string,
@@ -159,7 +159,7 @@ Then(
   },
 );
 
-async function seeWrittenInOrder(world: PortalWorld) {
+async function seeWrittenInOrder(world: CockpitWorld) {
   const shown = await world.page().getByRole("article").innerText();
   let from = 0;
   for (const line of world.written) {
@@ -171,7 +171,7 @@ async function seeWrittenInOrder(world: PortalWorld) {
 
 Then(
   "I see its narrative, its rule and both scenarios with all their steps, in the order written",
-  async function (this: PortalWorld) {
+  async function (this: CockpitWorld) {
     await seeWrittenInOrder(this);
   },
 );
@@ -289,41 +289,41 @@ const PART = Object.keys(PARTS).join("|");
 
 Given(
   new RegExp(`^the default branch holds the feature "([^"]*)" with a (${PART})$`),
-  function (this: PortalWorld, title: string, part: string) {
+  function (this: CockpitWorld, title: string, part: string) {
     const { body, written } = PARTS[part] ?? { body: [], written: [] };
     this.holds("features/payments/pay-with-a-saved-card.feature", featureFile({ title, body }));
     this.written = written;
   },
 );
 
-Then(new RegExp(`^I see its (?:${PART}) as written$`), async function (this: PortalWorld) {
+Then(new RegExp(`^I see its (?:${PART}) as written$`), async function (this: CockpitWorld) {
   await seeWrittenInOrder(this);
 });
 
 Then(
   "I see {string} listed, marked as having no id",
-  async function (this: PortalWorld, title: string) {
+  async function (this: CockpitWorld, title: string) {
     const listed = this.page().getByRole("listitem").filter({ hasText: title });
     await listed.getByText("no id", { exact: true }).waitFor();
   },
 );
 
-Then("I see {string} listed as broken", async function (this: PortalWorld, file: string) {
+Then("I see {string} listed as broken", async function (this: CockpitWorld, file: string) {
   const listed = this.page().getByRole("listitem").filter({ hasText: file });
   await listed.getByText("broken", { exact: true }).waitFor();
 });
 
-Then("I am told the default branch has no features yet", async function (this: PortalWorld) {
+Then("I am told the default branch has no features yet", async function (this: CockpitWorld) {
   await this.page().getByText("The default branch has no features yet").waitFor();
   expect(await this.page().getByRole("listitem").count()).toBe(0);
 });
 
-Then("I see {string} listed as backlog", async function (this: PortalWorld, title: string) {
+Then("I see {string} listed as backlog", async function (this: CockpitWorld, title: string) {
   const listed = this.page().getByRole("listitem").filter({ hasText: title });
   await listed.getByText("backlog", { exact: true }).waitFor();
 });
 
-Then("I see {string} marked as backlog", async function (this: PortalWorld, scenario: string) {
+Then("I see {string} marked as backlog", async function (this: CockpitWorld, scenario: string) {
   const page = this.page();
   await page
     .getByRole("region", { name: scenario })

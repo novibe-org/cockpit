@@ -1,9 +1,9 @@
 {
-  "name": "novibe",
+  "name": "cockpit",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev:portal": "pnpm --filter @novibe/portal dev",
+    "dev:cockpit": "pnpm --filter @novibe/cockpit dev",
     "test": "pnpm -r --if-present test",
     "typecheck": "pnpm -r --if-present typecheck",
     "lint": "biome check apps",

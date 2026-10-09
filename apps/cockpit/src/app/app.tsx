@@ -70,7 +70,7 @@ function usePlanned(branch: string | undefined) {
       );
       return true;
     } catch {
-      setRefused("the portal could not change the plan");
+      setRefused("the cockpit could not change the plan");
       return false;
     }
   };
@@ -139,7 +139,7 @@ export function App() {
     <BranchInAddress value={branch}>
       <header className={classes.bar}>
         <Title order={1} className={classes.brand}>
-          <Link to={{}}>portal</Link>
+          <Link to={{}}>cockpit</Link>
         </Title>
         {read && <BranchMenu branches={read.branches} shown={read.branch} />}
         {listed.length > 0 && <span className={classes.totals}>{totalsOf(listed)}</span>}
@@ -152,7 +152,7 @@ export function App() {
       <main className={classes.layout} {...dragging}>
         {answer === "failed" && (
           <div className={classes.column}>
-            <Notice>The portal could not read {branch ?? "the default branch"}.</Notice>
+            <Notice>The cockpit could not read {branch ?? "the default branch"}.</Notice>
           </div>
         )}
         {read && (

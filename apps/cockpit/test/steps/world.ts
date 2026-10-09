@@ -21,8 +21,8 @@ import { resultsArtifact, type Verdict } from "./run";
 
 setDefaultTimeout(60_000);
 
-const PORTAL_DIR = join(import.meta.dirname, "..", "..");
-const GENERATED = join(PORTAL_DIR, "test", "fixture", "generated");
+const COCKPIT_DIR = join(import.meta.dirname, "..", "..");
+const GENERATED = join(COCKPIT_DIR, "test", "fixture", "generated");
 export const REPOSITORY = "acme/shop";
 const REPOSITORY_ID = 1;
 const ROUTES = `/repos/${REPOSITORY}/`;
@@ -54,8 +54,8 @@ let defaultBranch = MAIN;
 let github: Server;
 let storage: Server;
 let storagePort: number;
-let portal: TestHarness;
-let portalUrl: URL;
+let cockpit: TestHarness;
+let cockpitUrl: URL;
 let browser: Browser;
 
 function branchNamed(name: string): Branch {
@@ -234,19 +234,19 @@ BeforeAll(async () => {
   writeFileSync(
     config,
     JSON.stringify({
-      name: "novibe-portal-test",
-      main: join(PORTAL_DIR, "src", "worker", "index.ts"),
+      name: "novibe-cockpit-test",
+      main: join(COCKPIT_DIR, "src", "worker", "index.ts"),
       compatibility_date: "2026-07-01",
       assets: {
-        directory: join(PORTAL_DIR, "dist"),
+        directory: join(COCKPIT_DIR, "dist"),
         not_found_handling: "single-page-application",
         run_worker_first: ["/api/*"],
       },
       d1_databases: [
         {
           binding: "PLAN",
-          database_name: "novibe-portal-plan",
-          migrations_dir: join(PORTAL_DIR, "migrations"),
+          database_name: "novibe-cockpit-plan",
+          migrations_dir: join(COCKPIT_DIR, "migrations"),
         },
       ],
       vars: {
@@ -257,23 +257,23 @@ BeforeAll(async () => {
       },
     }),
   );
-  portal = createTestHarness({ workers: [{ configPath: config }] });
-  ({ url: portalUrl } = await portal.listen());
-  await portal.getWorker().applyD1Migrations("PLAN");
+  cockpit = createTestHarness({ workers: [{ configPath: config }] });
+  ({ url: cockpitUrl } = await cockpit.listen());
+  await cockpit.getWorker().applyD1Migrations("PLAN");
   browser = await chromium.launch();
 });
 
 AfterAll(async () => {
   await Promise.all([
     browser?.close(),
-    portal?.close(),
+    cockpit?.close(),
     ...[github, storage].map(
       (server) => new Promise((closed) => (server ? server.close(closed) : closed(undefined))),
     ),
   ]);
 });
 
-export class PortalWorld extends World {
+export class CockpitWorld extends World {
   written: string[] = [];
   picked: string | undefined;
   plan: Plan | undefined;
@@ -341,7 +341,7 @@ export class PortalWorld extends World {
   }
 
   async change(change: Change): Promise<Plan> {
-    const response = await fetch(new URL("/api/plan", portalUrl), {
+    const response = await fetch(new URL("/api/plan", cockpitUrl), {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(change),
@@ -352,14 +352,14 @@ export class PortalWorld extends World {
   }
 
   page(): Page {
-    if (!this.current) throw new Error("the portal is not open yet");
+    if (!this.current) throw new Error("the cockpit is not open yet");
     return this.current;
   }
 
   async open() {
     this.context ??= await browser.newContext();
     this.current ??= await this.context.newPage();
-    const address = new URL("/", portalUrl);
+    const address = new URL("/", cockpitUrl);
     if (this.shown) address.searchParams.set("branch", this.shown);
     await this.current.goto(address.toString());
   }
@@ -372,23 +372,23 @@ export class PortalWorld extends World {
     await this.close();
     this.context = undefined;
     this.current = undefined;
-    await portal.update((options) => options);
-    ({ url: portalUrl } = await portal.listen());
+    await cockpit.update((options) => options);
+    ({ url: cockpitUrl } = await cockpit.listen());
   }
 }
 
-setWorldConstructor(PortalWorld);
+setWorldConstructor(CockpitWorld);
 
 Before(async () => {
   branches.clear();
   defaultBranch = MAIN;
   branchNamed(defaultBranch).changed = new Date(0);
   latestRuns.clear();
-  const { PLAN } = await portal.getWorker<{ PLAN: D1Database }>().getEnv();
+  const { PLAN } = await cockpit.getWorker<{ PLAN: D1Database }>().getEnv();
   const plan = drizzle(PLAN);
   await plan.batch([plan.delete(picks), plan.delete(epics)]);
 });
 
-After(async function (this: PortalWorld) {
+After(async function (this: CockpitWorld) {
   await this.close();
 });

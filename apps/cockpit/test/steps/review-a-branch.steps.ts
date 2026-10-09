@@ -9,10 +9,10 @@ import {
   headOf,
   notInAnyEpicOn,
 } from "./plan";
-import { type PortalWorld, REPOSITORY } from "./world";
+import { type CockpitWorld, REPOSITORY } from "./world";
 import { featureFile, slug } from "./written";
 
-function branchHoldsTitled(world: PortalWorld, branch: string, title: string) {
+function branchHoldsTitled(world: CockpitWorld, branch: string, title: string) {
   world.featurePath = `features/payments/${slug(title)}.feature`;
   world.branchHolds(branch, world.featurePath, featureFile({ title }));
 }
@@ -22,7 +22,7 @@ const listedTitlesOn = (page: Page) =>
     .getByRole("listitem")
     .evaluateAll((items) => items.map((item) => item.querySelector("a")?.textContent));
 
-async function seeTheFeaturesOn(world: PortalWorld, branch: string) {
+async function seeTheFeaturesOn(world: CockpitWorld, branch: string) {
   const page = world.page();
   await page.getByRole("button", { name: `Branch ${branch}`, exact: true }).waitFor();
   await eventually(async () => {
@@ -32,27 +32,27 @@ async function seeTheFeaturesOn(world: PortalWorld, branch: string) {
 
 Given(
   "the default branch {string} and the branch {string}",
-  function (this: PortalWorld, byDefault: string, other: string) {
+  function (this: CockpitWorld, byDefault: string, other: string) {
     this.defaultBranchIs(byDefault);
     defaultBranchHolds(this, "Paying with a saved card");
     branchHoldsTitled(this, other, "Refunding a payment");
   },
 );
 
-Then("I see the features on {string}", async function (this: PortalWorld, branch: string) {
+Then("I see the features on {string}", async function (this: CockpitWorld, branch: string) {
   await seeTheFeaturesOn(this, branch);
 });
 
 Given(
   "the default branch {string}, {string} changed today and {string} yesterday",
-  function (this: PortalWorld, byDefault: string, today: string, yesterday: string) {
+  function (this: CockpitWorld, byDefault: string, today: string, yesterday: string) {
     this.defaultBranchIs(byDefault);
     this.branchChanged(today, new Date());
     this.branchChanged(yesterday, new Date(Date.now() - 86_400_000));
   },
 );
 
-When("I look at the branches I can choose", async function (this: PortalWorld) {
+When("I look at the branches I can choose", async function (this: CockpitWorld) {
   await this.open();
   await this.page()
     .getByRole("button", { name: /^Branch / })
@@ -61,7 +61,7 @@ When("I look at the branches I can choose", async function (this: PortalWorld) {
 
 Then(
   "I see {string} set apart first, then {string}, then {string}",
-  async function (this: PortalWorld, byDefault: string, first: string, second: string) {
+  async function (this: CockpitWorld, byDefault: string, first: string, second: string) {
     const menu = this.page().getByRole("menu");
     await menu.getByRole("menuitem", { name: second, exact: true }).waitFor();
     const seen = await menu.evaluate((shown) =>
@@ -73,13 +73,13 @@ Then(
   },
 );
 
-async function choose(world: PortalWorld, branch: string) {
+async function choose(world: CockpitWorld, branch: string) {
   const page = world.page();
   await page.getByRole("button", { name: /^Branch / }).click();
   await page.getByRole("menu").getByRole("menuitem", { name: branch, exact: true }).click();
 }
 
-Given("I chose the branch {string}", async function (this: PortalWorld, branch: string) {
+Given("I chose the branch {string}", async function (this: CockpitWorld, branch: string) {
   defaultBranchHolds(this, "Paying with a saved card");
   branchHoldsTitled(this, branch, "Refunding a payment");
   await this.open();
@@ -87,29 +87,29 @@ Given("I chose the branch {string}", async function (this: PortalWorld, branch: 
   await this.page().waitForURL((address) => address.searchParams.get("branch") === branch);
 });
 
-When("I load the same page again", async function (this: PortalWorld) {
+When("I load the same page again", async function (this: CockpitWorld) {
   await this.page().reload();
 });
 
-Then("I still see the features on {string}", async function (this: PortalWorld, branch: string) {
+Then("I still see the features on {string}", async function (this: CockpitWorld, branch: string) {
   await seeTheFeaturesOn(this, branch);
 });
 
 Given(
   "only {string} holds the feature {string}",
-  function (this: PortalWorld, branch: string, title: string) {
+  function (this: CockpitWorld, branch: string, title: string) {
     branchHoldsTitled(this, branch, title);
   },
 );
 
-When("I choose the branch {string}", async function (this: PortalWorld, branch: string) {
+When("I choose the branch {string}", async function (this: CockpitWorld, branch: string) {
   await this.open();
   await choose(this, branch);
 });
 
 Given(
   "the latest test run of {string} passed {string}",
-  function (this: PortalWorld, branch: string, title: string) {
+  function (this: CockpitWorld, branch: string, title: string) {
     const scenario = "Refunding in full";
     this.feature = title;
     this.featurePath = `features/payments/${slug(title)}.feature`;
@@ -119,14 +119,14 @@ Given(
   },
 );
 
-Given("the branch {string} is shown", function (this: PortalWorld, branch: string) {
+Given("the branch {string} is shown", function (this: CockpitWorld, branch: string) {
   this.shown = branch;
   branchHoldsTitled(this, branch, "Refunding a payment");
 });
 
 Then(
   "it leads to the feature's file on {string} on GitHub",
-  async function (this: PortalWorld, branch: string) {
+  async function (this: CockpitWorld, branch: string) {
     const file = this.page()
       .getByRole("article")
       .getByRole("link", { name: this.featurePath, exact: true });
@@ -138,7 +138,7 @@ Then(
 
 Given(
   "the epic {string}, and {string} only on {string}",
-  async function (this: PortalWorld, epic: string, title: string, branch: string) {
+  async function (this: CockpitWorld, epic: string, title: string, branch: string) {
     await this.change({ change: "start", title: epic });
     branchHoldsTitled(this, branch, title);
   },
@@ -146,7 +146,7 @@ Given(
 
 When(
   "I choose {string} and pick {string} into {string}",
-  async function (this: PortalWorld, branch: string, title: string, epic: string) {
+  async function (this: CockpitWorld, branch: string, title: string, epic: string) {
     await this.open();
     await choose(this, branch);
     const page = this.page();
@@ -158,13 +158,13 @@ When(
 
 Then(
   "I see {string} holding {string}",
-  async function (this: PortalWorld, epic: string, title: string) {
+  async function (this: CockpitWorld, epic: string, title: string) {
     await eventually(async () => {
       expect(await featuresIn(this.page(), epic)).toEqual([title]);
     });
   },
 );
 
-Then("I see {string}", async function (this: PortalWorld, title: string) {
+Then("I see {string}", async function (this: CockpitWorld, title: string) {
   await notInAnyEpicOn(this.page()).getByRole("link", { name: title, exact: true }).waitFor();
 });

@@ -1,7 +1,7 @@
 import { Given, Then, When } from "@cucumber/cucumber";
 import { epicHolding, epicOn } from "./plan";
 import type { Verdict } from "./run";
-import type { PortalWorld } from "./world";
+import type { CockpitWorld } from "./world";
 import { featureFile, slug } from "./written";
 
 const FEATURE = "Paying for an order";
@@ -15,7 +15,7 @@ const scenario = (name: string, tags: string[] = []) => [
 
 const times = <T>(count: number, each: T): T[] => Array.from({ length: count }, () => each);
 
-function defaultBranchHoldsFeature(world: PortalWorld, title: string, body: string[]): string {
+function defaultBranchHoldsFeature(world: CockpitWorld, title: string, body: string[]): string {
   world.feature = title;
   world.featurePath = `features/payments/${slug(title)}.feature`;
   world.holds(world.featurePath, featureFile({ title, body }));
@@ -23,7 +23,7 @@ function defaultBranchHoldsFeature(world: PortalWorld, title: string, body: stri
 }
 
 function defaultBranchHoldsProved(
-  world: PortalWorld,
+  world: CockpitWorld,
   title: string,
   verdicts: (Verdict | undefined)[],
   tags: string[][] = [],
@@ -42,24 +42,24 @@ const passedAndFailed = (passed: number, of: number): Verdict[] => [
   ...times<Verdict>(of - passed, "failed"),
 ];
 
-async function markedAs(world: PortalWorld, name: string, result: string) {
+async function markedAs(world: CockpitWorld, name: string, result: string) {
   const region = world.page().getByRole("region", { name, exact: true });
   await region.getByText(result, { exact: true }).waitFor();
 }
 
-const rowOf = (world: PortalWorld, title: string) =>
+const rowOf = (world: CockpitWorld, title: string) =>
   world.page().getByRole("listitem").filter({ hasText: title });
 
 Given(
   /^the default branch's latest test run (passed|failed) the scenario "([^"]*)"$/,
-  function (this: PortalWorld, verdict: Verdict, name: string) {
+  function (this: CockpitWorld, verdict: Verdict, name: string) {
     this.proved(defaultBranchHoldsFeature(this, FEATURE, scenario(name)), name, verdict);
   },
 );
 
 Given(
   "the default branch's latest test run did not run the scenario {string}",
-  function (this: PortalWorld, name: string) {
+  function (this: CockpitWorld, name: string) {
     defaultBranchHoldsFeature(this, FEATURE, scenario(name));
     this.testRun();
   },
@@ -67,19 +67,19 @@ Given(
 
 Given(
   "the scenario {string} is tagged {string}",
-  function (this: PortalWorld, name: string, tag: string) {
+  function (this: CockpitWorld, name: string, tag: string) {
     defaultBranchHoldsFeature(this, FEATURE, scenario(name, [tag]));
     this.scenario = name;
   },
 );
 
-Given("the default branch's latest test run passed it", function (this: PortalWorld) {
+Given("the default branch's latest test run passed it", function (this: CockpitWorld) {
   this.proved(this.featurePath, this.scenario, "passed");
 });
 
 Given(
   "the default branch's latest test run passed the outline {string} for {string} and failed it for {string}",
-  function (this: PortalWorld, outline: string, passing: string, failing: string) {
+  function (this: CockpitWorld, outline: string, passing: string, failing: string) {
     const [placeholder = ""] = /<[^<>]+>/.exec(outline) ?? [];
     const path = defaultBranchHoldsFeature(this, FEATURE, [
       "",
@@ -98,7 +98,7 @@ Given(
 
 Given(
   "the default branch's latest test run passed {int} and failed {int} of the {int} scenarios of {string}",
-  function (this: PortalWorld, passed: number, failed: number, of: number, title: string) {
+  function (this: CockpitWorld, passed: number, failed: number, of: number, title: string) {
     const verdicts = [
       ...times<Verdict>(passed, "passed"),
       ...times<Verdict>(failed, "failed"),
@@ -110,7 +110,7 @@ Given(
 
 Given(
   "{string} has {int} scenarios the latest run passed and {int} tagged {string} it did not run",
-  function (this: PortalWorld, title: string, passed: number, tagged: number, tag: string) {
+  function (this: CockpitWorld, title: string, passed: number, tagged: number, tag: string) {
     const verdicts = [...times<Verdict>(passed, "passed"), ...times(tagged, undefined)];
     defaultBranchHoldsProved(this, title, verdicts, [
       ...times(passed, []),
@@ -122,7 +122,7 @@ Given(
 Given(
   "the epic {string} holds {string} with {int} of {int} passed and {string} with {int} of {int} passed",
   async function (
-    this: PortalWorld,
+    this: CockpitWorld,
     epic: string,
     first: string,
     firstPassed: number,
@@ -139,7 +139,7 @@ Given(
 
 Given(
   "the default branch's latest test run passed {int} of its {int} scenarios",
-  function (this: PortalWorld, passed: number, of: number) {
+  function (this: CockpitWorld, passed: number, of: number) {
     const verdicts = [
       ...times<Verdict>(passed, "passed"),
       ...times<Verdict>(1, "failed"),
@@ -155,14 +155,14 @@ Given(
 
 Given(
   "the default branch's latest test run finished {int} hours ago",
-  function (this: PortalWorld, hours: number) {
+  function (this: CockpitWorld, hours: number) {
     this.testRun().finished = new Date(Date.now() - hours * 3_600_000);
   },
 );
 
 Given(
   "the default branch's latest test run ran for an earlier commit than the one shown",
-  function (this: PortalWorld) {
+  function (this: CockpitWorld) {
     const name = "Paying with a saved card";
     this.proved(defaultBranchHoldsFeature(this, FEATURE, scenario(name)), name, "passed");
     this.ranForAnEarlierCommit();
@@ -171,14 +171,14 @@ Given(
 
 Given("the default branch has never had a test run", () => {});
 
-When("I read its feature", async function (this: PortalWorld) {
+When("I read its feature", async function (this: CockpitWorld) {
   await this.open();
   await this.page().getByRole("link", { name: this.feature, exact: true }).click();
 });
 
 Then(
   /^I see "([^"]*)" marked as (passed|failed)$/,
-  async function (this: PortalWorld, name: string, result: string) {
+  async function (this: CockpitWorld, name: string, result: string) {
     if (name === this.feature) {
       const shown = result === "passed" ? "1 of 1 passed" : "0 of 1 passed";
       await rowOf(this, name).getByText(shown, { exact: true }).waitFor();
@@ -188,13 +188,13 @@ Then(
   },
 );
 
-Then("I see {string} marked as not run", async function (this: PortalWorld, name: string) {
+Then("I see {string} marked as not run", async function (this: CockpitWorld, name: string) {
   await markedAs(this, name, "not run");
 });
 
 Then(
   "I see {string} marked as failed, counted as one scenario",
-  async function (this: PortalWorld, name: string) {
+  async function (this: CockpitWorld, name: string) {
     await markedAs(this, name, "failed");
     await rowOf(this, this.feature).getByText("0 of 1 passed", { exact: true }).waitFor();
   },
@@ -202,7 +202,7 @@ Then(
 
 Then(
   "I see {string} with {int} of {int} passed",
-  async function (this: PortalWorld, name: string, passed: number, of: number) {
+  async function (this: CockpitWorld, name: string, passed: number, of: number) {
     const shown = `${passed} of ${of} passed`;
     const isEpic = this.plan?.epics.some(({ title }) => title === name);
     const holder = isEpic ? epicOn(this.page(), name) : rowOf(this, name);
@@ -212,21 +212,21 @@ Then(
 
 Then(
   "I see {int} of {int} passed for the whole of the default branch",
-  async function (this: PortalWorld, passed: number, of: number) {
+  async function (this: CockpitWorld, passed: number, of: number) {
     const shown = `${passed} of ${of} passed`;
     await this.page().getByRole("banner").getByText(shown, { exact: true }).waitFor();
   },
 );
 
-Then("I see that the tests ran {int} hours ago", async function (this: PortalWorld, hours) {
+Then("I see that the tests ran {int} hours ago", async function (this: CockpitWorld, hours) {
   await this.page().getByText(`tests ran ${hours} hours ago`).waitFor();
 });
 
-Then("I see its results, said to be from an earlier commit", async function (this: PortalWorld) {
+Then("I see its results, said to be from an earlier commit", async function (this: CockpitWorld) {
   await rowOf(this, this.feature).getByText("1 of 1 passed", { exact: true }).waitFor();
   await this.page().getByText("for an earlier commit").waitFor();
 });
 
-Then("I am told the default branch has no test run yet", async function (this: PortalWorld) {
+Then("I am told the default branch has no test run yet", async function (this: CockpitWorld) {
   await this.page().getByText("The default branch has no test run yet").waitFor();
 });
