@@ -43,7 +43,7 @@ Feature: Picking features into epics
   Scenario: Features in no epic show in one list after the epics, each with its domain
     Given the epic "Checkout" holds "Paying with a saved card"
     And the default branch also holds "Earning points" in "rewards" and "Refunding a payment" in "payments"
-    When I open the portal
+    When I open the cockpit
     Then after "Checkout" I see not in any epic "Refunding a payment" in "payments", then "Earning points" in "rewards"
 
   Scenario: Only a feature with an id can be picked into an epic
@@ -59,10 +59,10 @@ Feature: Picking features into epics
   Scenario: A feature not on the branch shown stays in its epic, marked as gone
     Given the epic "Checkout" holds the feature with the id "pay-by-cheque"
     And the branch shown holds no feature with that id
-    When I open the portal
+    When I open the cockpit
     Then I see "pay-by-cheque" in "Checkout", marked as not on this branch
 
   Scenario: The epics are kept until I change them
     Given the epic "Checkout" holds "Paying with a saved card"
-    When I open the portal again later
+    When I open the cockpit again later
     Then I still see "Paying with a saved card" in "Checkout"
