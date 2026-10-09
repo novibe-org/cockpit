@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src=".github/icon.svg" alt="" width="120" height="120" />
+
 # Cockpit
 
 ### The driver's view of a spec-driven project.
