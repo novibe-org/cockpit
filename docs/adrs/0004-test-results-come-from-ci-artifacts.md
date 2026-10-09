@@ -41,4 +41,4 @@ the Worker can read only what GitHub serves it.
 - A repository whose default branch is not main needs its CI to run on pushes to that branch: a
   workflow's trigger names branches, not the default one.
 
-Shapes the views `portal` and `readFeatures`.
+Shapes the views `cockpit` and `readFeatures`.

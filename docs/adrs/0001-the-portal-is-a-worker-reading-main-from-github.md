@@ -31,4 +31,4 @@ against a local checkout, which a Worker cannot do.
 - Hosting later is a deployment change, not a redesign — but the Worker has no access boundary of
   its own, so hosting with a private repository's token needs one in front of it first.
 
-Shapes the views `portal`, `readFeatures` and `local`.
+Shapes the views `cockpit`, `readFeatures` and `local`.

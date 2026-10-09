@@ -19,4 +19,4 @@ answer passed on unchecked fails somewhere far from GitHub.
 - A change to a shape is a change to one schema.
 - zod is a dependency of the portal.
 
-Shapes the views `portal` and `readFeatures`.
+Shapes the views `cockpit` and `readFeatures`.

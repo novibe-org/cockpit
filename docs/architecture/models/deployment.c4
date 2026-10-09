@@ -1,11 +1,11 @@
 deployment {
   zone machine 'The driver\'s machine' {
     node dev 'wrangler dev' {
-      worker = instanceOf novibe.portal.worker
-      plan = instanceOf novibe.portal.plan
+      worker = instanceOf novibe.cockpit.worker
+      plan = instanceOf novibe.cockpit.plan
     }
     node browser 'Browser' {
-      app = instanceOf novibe.portal.app
+      app = instanceOf novibe.cockpit.app
     }
   }
   zone githubCom 'GitHub' {
