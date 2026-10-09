@@ -24,7 +24,7 @@ model {
   novibe = system 'NoVibe' {
     description 'A spec-driven development suite.'
 
-    portal = application 'Portal' {
+    cockpit = application 'Cockpit' {
       description 'Where the driver reads the specification and plans it into epics.'
     }
   }

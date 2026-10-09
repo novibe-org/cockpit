@@ -1,6 +1,6 @@
 import { expect } from "expect";
 import type { Locator, Page } from "playwright";
-import type { PortalWorld } from "./world";
+import type { CockpitWorld } from "./world";
 import { featureFile, slug } from "./written";
 
 export const epicsOn = (page: Page) => page.getByRole("group", { name: "epics", exact: true });
@@ -49,7 +49,7 @@ export async function dragOnto(source: Locator, target: Locator, half: "upper" |
 }
 
 export function defaultBranchHolds(
-  world: PortalWorld,
+  world: CockpitWorld,
   title: string,
   domain = "payments",
   written: { id?: string | null; tags?: string[] } = {},
@@ -57,20 +57,20 @@ export function defaultBranchHolds(
   world.holds(`features/${domain}/${slug(title)}.feature`, featureFile({ title, ...written }));
 }
 
-export async function epicHolding(world: PortalWorld, title: string, ...ids: string[]) {
+export async function epicHolding(world: CockpitWorld, title: string, ...ids: string[]) {
   const { epics } = await world.change({ change: "start", title });
   const epic = epics.filter((started) => started.title === title).at(-1);
   if (!epic) throw new Error(`the epic "${title}" was not started`);
   for (const id of ids) await world.change({ change: "pick", feature: id, epic: epic.id });
 }
 
-export async function reading(world: PortalWorld, title: string) {
+export async function reading(world: CockpitWorld, title: string) {
   if (!world.holdsTitled(title)) defaultBranchHolds(world, title);
   await world.open();
   await world.page().getByRole("link", { name: title, exact: true }).click();
 }
 
-export async function seeNotInAnyEpic(world: PortalWorld, title: string) {
+export async function seeNotInAnyEpic(world: CockpitWorld, title: string) {
   const page = world.page();
   await notInAnyEpicOn(page).getByRole("listitem").filter({ hasText: title }).waitFor();
   expect(await epicsOn(page).getByRole("listitem").filter({ hasText: title }).count()).toBe(0);

@@ -6,7 +6,7 @@ Feature: Reviewing a branch
 
   Scenario: The default branch is shown until I choose another branch
     Given the default branch "develop" and the branch "feat/refunds"
-    When I open the portal
+    When I open the cockpit
     Then I see the features on "develop"
 
   Scenario: The branches to choose from start with the default branch, then the most recently changed

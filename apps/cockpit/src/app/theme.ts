@@ -51,7 +51,7 @@ export const theme = createTheme({
   radius: { xs: "3px", sm: "6px", md: "9px", lg: "12px", xl: "16px" },
 });
 
-export const portalVariables: CSSVariablesResolver = () => ({
+export const cockpitVariables: CSSVariablesResolver = () => ({
   variables: {},
   light: {
     "--mantine-color-body": "#f8f9fb",

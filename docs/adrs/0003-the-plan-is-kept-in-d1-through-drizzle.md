@@ -32,4 +32,4 @@ the same place.
 - A test run keeps its plan in memory, apart from the plan `wrangler dev` keeps on disk.
 - Hosting needs its own D1 database with the migrations applied.
 
-Shapes the views `portal`, `readFeatures`, `changePlan` and `local`.
+Shapes the views `cockpit`, `readFeatures`, `changePlan` and `local`.

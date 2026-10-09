@@ -32,35 +32,35 @@ Feature: Seeing what the tests proved
 
   Scenario: A feature shows how many of its scenarios passed
     Given the default branch's latest test run passed 2 and failed 1 of the 3 scenarios of "Paying with a saved card"
-    When I open the portal
+    When I open the cockpit
     Then I see "Paying with a saved card" with 2 of 3 passed
 
   Scenario: A feature's backlog scenarios count among its scenarios
     Given "Earning points" has 2 scenarios the latest run passed and 1 tagged "@backlog" it did not run
-    When I open the portal
+    When I open the cockpit
     Then I see "Earning points" with 2 of 3 passed
 
   Scenario: An epic shows how many of its features' scenarios passed
     Given the epic "Checkout" holds "Paying with a saved card" with 2 of 3 passed and "Paying by invoice" with 1 of 2 passed
-    When I open the portal
+    When I open the cockpit
     Then I see "Checkout" with 3 of 5 passed
 
-  Scenario: The portal shows how many of all the scenarios on the default branch passed
+  Scenario: The cockpit shows how many of all the scenarios on the default branch passed
     Given the default branch's latest test run passed 38 of its 40 scenarios
-    When I open the portal
+    When I open the cockpit
     Then I see 38 of 40 passed for the whole of the default branch
 
-  Scenario: The portal says when the default branch's latest test run happened
+  Scenario: The cockpit says when the default branch's latest test run happened
     Given the default branch's latest test run finished 2 hours ago
-    When I open the portal
+    When I open the cockpit
     Then I see that the tests ran 2 hours ago
 
   Scenario: Results from an earlier commit of the default branch are shown and said to be earlier
     Given the default branch's latest test run ran for an earlier commit than the one shown
-    When I open the portal
+    When I open the cockpit
     Then I see its results, said to be from an earlier commit
 
   Scenario: The default branch without a test run says so
     Given the default branch has never had a test run
-    When I open the portal
+    When I open the cockpit
     Then I am told the default branch has no test run yet

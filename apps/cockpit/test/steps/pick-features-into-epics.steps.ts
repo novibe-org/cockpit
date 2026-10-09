@@ -17,28 +17,28 @@ import {
   rowOf,
   seeNotInAnyEpic,
 } from "./plan";
-import type { PortalWorld } from "./world";
+import type { CockpitWorld } from "./world";
 import { slug } from "./written";
 
-function listedRowOf(world: PortalWorld, title: string) {
+function listedRowOf(world: CockpitWorld, title: string) {
   const page = world.page();
   const holder = world.plan?.epics.find(({ features }) => features.includes(slug(title)));
   if (holder) return rowOf(page, holder.title, title);
   return notInAnyEpicOn(page).getByRole("listitem").filter({ hasText: title });
 }
 
-Given("the epic {string}", async function (this: PortalWorld, title: string) {
+Given("the epic {string}", async function (this: CockpitWorld, title: string) {
   await this.change({ change: "start", title });
 });
 
-Given("the epic {string} holds {string}", async function (this: PortalWorld, epic, title) {
+Given("the epic {string} holds {string}", async function (this: CockpitWorld, epic, title) {
   defaultBranchHolds(this, title);
   await epicHolding(this, epic, slug(title));
 });
 
 Given(
   "the epic {string} holds {string}, and there is the epic {string}",
-  async function (this: PortalWorld, epic: string, title: string, other: string) {
+  async function (this: CockpitWorld, epic: string, title: string, other: string) {
     defaultBranchHolds(this, title);
     await epicHolding(this, epic, slug(title));
     await this.change({ change: "start", title: other });
@@ -47,7 +47,7 @@ Given(
 
 Given(
   "the default branch also holds {string} in {string} and {string} in {string}",
-  function (this: PortalWorld, first: string, firstDomain: string, last: string, lastDomain) {
+  function (this: CockpitWorld, first: string, firstDomain: string, last: string, lastDomain) {
     defaultBranchHolds(this, first, firstDomain);
     defaultBranchHolds(this, last, lastDomain);
   },
@@ -55,7 +55,7 @@ Given(
 
 Given(
   "the epic {string} and the feature {string} without an id",
-  async function (this: PortalWorld, epic: string, title: string) {
+  async function (this: CockpitWorld, epic: string, title: string) {
     await this.change({ change: "start", title: epic });
     defaultBranchHolds(this, title, "payments", { id: null });
   },
@@ -63,7 +63,7 @@ Given(
 
 Given(
   "the epic {string} and the feature {string} tagged {string}",
-  async function (this: PortalWorld, epic: string, title: string, tag: string) {
+  async function (this: CockpitWorld, epic: string, title: string, tag: string) {
     await this.change({ change: "start", title: epic });
     defaultBranchHolds(this, title, "rewards", { tags: [tag] });
   },
@@ -71,25 +71,25 @@ Given(
 
 Given(
   "the epic {string} holds the feature with the id {string}",
-  async function (this: PortalWorld, epic: string, id: string) {
+  async function (this: CockpitWorld, epic: string, id: string) {
     defaultBranchHolds(this, id, "payments", { id });
     await epicHolding(this, epic, id);
     this.picked = id;
   },
 );
 
-Given("the branch shown holds no feature with that id", function (this: PortalWorld) {
+Given("the branch shown holds no feature with that id", function (this: CockpitWorld) {
   this.noLongerHolds(this.picked ?? "");
 });
 
-When("I start the epic {string}", async function (this: PortalWorld, title: string) {
+When("I start the epic {string}", async function (this: CockpitWorld, title: string) {
   await this.open();
   const page = this.page();
   await page.getByRole("textbox", { name: "Epic title" }).fill(title);
   await page.getByRole("button", { name: "Start epic" }).click();
 });
 
-When("I start an epic titled {string}", async function (this: PortalWorld, title: string) {
+When("I start an epic titled {string}", async function (this: CockpitWorld, title: string) {
   await this.open();
   const page = this.page();
   await page.getByRole("textbox", { name: "Epic title" }).fill(title);
@@ -97,13 +97,13 @@ When("I start an epic titled {string}", async function (this: PortalWorld, title
   await page.getByRole("alert").waitFor({ timeout: 5_000 });
 });
 
-When("I pick {string} into {string}", async function (this: PortalWorld, title, epic) {
+When("I pick {string} into {string}", async function (this: CockpitWorld, title, epic) {
   if (!this.holdsTitled(title)) defaultBranchHolds(this, title);
   await this.open();
   await dragOnto(listedRowOf(this, title), headOf(this.page(), epic), "lower");
 });
 
-When("I try to pick {string} into {string}", async function (this: PortalWorld, title, epic) {
+When("I try to pick {string} into {string}", async function (this: CockpitWorld, title, epic) {
   await reading(this, title);
   const select = epicSelectOn(this.page());
   expect(await select.getByRole("option", { name: epic, exact: true }).count()).toBe(1);
@@ -112,7 +112,7 @@ When("I try to pick {string} into {string}", async function (this: PortalWorld, 
 
 When(
   "I pick {string} into {string} and take it out again before that is saved",
-  async function (this: PortalWorld, title: string, epic: string) {
+  async function (this: CockpitWorld, title: string, epic: string) {
     await reading(this, title);
     const page = this.page();
     const select = epicSelectOn(page);
@@ -140,13 +140,13 @@ When(
   },
 );
 
-When("I take {string} out of {string}", async function (this: PortalWorld, title, epic) {
+When("I take {string} out of {string}", async function (this: CockpitWorld, title, epic) {
   await this.open();
   const page = this.page();
   await dragOnto(rowOf(page, epic, title), notInAnyEpicOn(page), "upper");
 });
 
-When("I open the portal again later", async function (this: PortalWorld) {
+When("I open the cockpit again later", async function (this: CockpitWorld) {
   await this.open();
   await this.restart();
   await this.open();
@@ -154,7 +154,7 @@ When("I open the portal again later", async function (this: PortalWorld) {
 
 Then(
   "I see {string}, then {string} holding no features yet",
-  async function (this: PortalWorld, first: string, second: string) {
+  async function (this: CockpitWorld, first: string, second: string) {
     const page = this.page();
     await epicOn(page, second).getByText("No features yet.").waitFor();
     const seen = await epicsOn(page)
@@ -172,13 +172,13 @@ Then(
   },
 );
 
-Then("I still see only the epic {string}", async function (this: PortalWorld, title: string) {
+Then("I still see only the epic {string}", async function (this: CockpitWorld, title: string) {
   expect(await epicTitlesOn(this.page())).toEqual([title]);
 });
 
 Then(
   "I see {string} holding {string}, then {string}",
-  async function (this: PortalWorld, epic: string, first: string, second: string) {
+  async function (this: CockpitWorld, epic: string, first: string, second: string) {
     await eventually(async () => {
       expect(await featuresIn(this.page(), epic)).toEqual([first, second]);
     });
@@ -187,7 +187,7 @@ Then(
 
 Then(
   "I see {string} in {string} and no longer in {string}",
-  async function (this: PortalWorld, title: string, epic: string, before: string) {
+  async function (this: CockpitWorld, title: string, epic: string, before: string) {
     const page = this.page();
     await epicOn(page, epic).getByRole("listitem").filter({ hasText: title }).waitFor();
     expect(
@@ -196,18 +196,18 @@ Then(
   },
 );
 
-Then("I see {string} as not in any epic", async function (this: PortalWorld, title: string) {
+Then("I see {string} as not in any epic", async function (this: CockpitWorld, title: string) {
   await seeNotInAnyEpic(this, title);
 });
 
-Then("I see {string} still as not in any epic", async function (this: PortalWorld, title) {
+Then("I see {string} still as not in any epic", async function (this: CockpitWorld, title) {
   await seeNotInAnyEpic(this, title);
 });
 
 Then(
   "after {string} I see not in any epic {string} in {string}, then {string} in {string}",
   async function (
-    this: PortalWorld,
+    this: CockpitWorld,
     epic: string,
     first: string,
     firstDomain: string,
@@ -233,7 +233,7 @@ Then(
 
 Then(
   "I see {string} in {string}, marked as backlog",
-  async function (this: PortalWorld, title: string, epic: string) {
+  async function (this: CockpitWorld, title: string, epic: string) {
     const listed = epicOn(this.page(), epic).getByRole("listitem").filter({ hasText: title });
     await listed.getByText("backlog", { exact: true }).waitFor();
   },
@@ -241,7 +241,7 @@ Then(
 
 Then(
   "I see {string} in {string}, marked as not on this branch",
-  async function (this: PortalWorld, id: string, epic: string) {
+  async function (this: CockpitWorld, id: string, epic: string) {
     const listed = epicOn(this.page(), epic).getByRole("listitem").filter({ hasText: id });
     await listed.getByText("not on this branch", { exact: true }).waitFor();
   },
@@ -249,7 +249,7 @@ Then(
 
 Then(
   "I still see {string} in {string}",
-  async function (this: PortalWorld, title: string, epic: string) {
+  async function (this: CockpitWorld, title: string, epic: string) {
     await epicOn(this.page(), epic).getByRole("listitem").filter({ hasText: title }).waitFor();
   },
 );

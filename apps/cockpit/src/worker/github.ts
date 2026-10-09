@@ -62,7 +62,7 @@ const urlOf = (env: Env, route: string) =>
 
 const headersFor = (env: Env, accept: string) => ({
   accept,
-  "user-agent": "novibe-portal",
+  "user-agent": "novibe-cockpit",
   "x-github-api-version": "2022-11-28",
   ...(env.GITHUB_TOKEN ? { authorization: `Bearer ${env.GITHUB_TOKEN}` } : {}),
 });

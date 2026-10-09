@@ -21,10 +21,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
-      - run: pnpm --filter @novibe/portal exec playwright install --with-deps chromium
+      - run: pnpm --filter @novibe/cockpit exec playwright install --with-deps chromium
       - run: pnpm test
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results
-          path: apps/portal/test/results/messages.ndjson
+          path: apps/cockpit/test/results/messages.ndjson
