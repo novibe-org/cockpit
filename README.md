@@ -7,8 +7,15 @@
 Read the spec on any branch, see what the tests proved, plan what comes next — and, later, the
 metrics that show how it's going.
 
+[![CI](https://img.shields.io/github/actions/workflow/status/novibe-org/cockpit/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/novibe-org/cockpit/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-3b82f6?style=flat-square)](LICENSE)
 [![Built with NoVibe](https://img.shields.io/badge/built_with-NoVibe-6e56cf?style=flat-square)](https://github.com/novibe-org/novibe)
+<br>
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers_%2B_D1-f38020?style=flat-square&logo=cloudflare&logoColor=white)](https://developers.cloudflare.com/workers/)
+[![React](https://img.shields.io/badge/React-19-149eca?style=flat-square&logo=react&logoColor=white)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Cucumber](https://img.shields.io/badge/specs-Cucumber-23d96c?style=flat-square&logo=cucumber&logoColor=white)](https://cucumber.io)
+[![LikeC4](https://img.shields.io/badge/architecture-LikeC4_%C2%B7_arc42-6e56cf?style=flat-square)](docs/architecture/)
 
 </div>
 
