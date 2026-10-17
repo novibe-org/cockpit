@@ -11,9 +11,9 @@ importers:
       '@biomejs/biome':
         specifier: ^2.5.3
         version: 2.5.13
-      gherkin-lint-plus:
-        specifier: github:StefanStuehrmann/gherkin-lint-plus
-        version: https://codeload.github.com/StefanStuehrmann/gherkin-lint-plus/tar.gz/a3883a0aa20dae0a59e67bb2c4b95f18aa2ec867
+      '@novibe-org/gherkin-lint-plus':
+        specifier: ^1.1.0
+        version: 1.1.0
       likec4:
         specifier: ^1.58.0
         version: 1.59.3(@types/node@24.13.4)(jiti@2.7.0)(picomatch@4.0.7)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tsx@4.23.13)(yaml@2.9.1)
@@ -1128,6 +1128,11 @@ packages:
     peerDependencies:
       react: ^19.2.0
 
+  '@novibe-org/gherkin-lint-plus@1.1.0':
+    resolution: {integrity: sha512-BjPDusfo6DoMNTOnvx26R6Gk5+v/yfubVy0XmuxlPslQjzDKxgA2Iz3tTmzCkOSTjDzVwFLLCB2wFkXiXZSPsw==}
+    engines: {node: '>=20'}
+    hasBin: true
+
   '@oxc-project/types@0.149.0':
     resolution: {integrity: sha512-Efcc+iF0j3Bf67YjEqIqWXbX5XddXoK/Mw4K1/JuXwRCZ8N16VR7iT23nlCc9XrveFVh/E5Rqs2StT0V8v9LdA==}
 
@@ -1616,12 +1621,6 @@ packages:
 
   get-tsconfig@4.14.3:
     resolution: {integrity: sha512-++QEw4DIY7WGoukz+/+A/8dGYPT9l9yIadnmSgZ8Rjr3YVSVDipQSO9CdnJo9ePqFqUUqh+wk9uIaoiAwsiPkA==}
-
-  gherkin-lint-plus@https://codeload.github.com/StefanStuehrmann/gherkin-lint-plus/tar.gz/a3883a0aa20dae0a59e67bb2c4b95f18aa2ec867:
-    resolution: {tarball: https://codeload.github.com/StefanStuehrmann/gherkin-lint-plus/tar.gz/a3883a0aa20dae0a59e67bb2c4b95f18aa2ec867}
-    version: 1.0.2
-    engines: {node: '>=20'}
-    hasBin: true
 
   glob@10.5.0:
     resolution: {integrity: sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg==}
@@ -3076,6 +3075,16 @@ snapshots:
     dependencies:
       react: 19.3.0
 
+  '@novibe-org/gherkin-lint-plus@1.1.0':
+    dependencies:
+      '@cucumber/gherkin': 39.1.0
+      '@cucumber/messages': 32.3.1
+      commander: 13.1.0
+      glob: 10.5.0
+      jiti: 2.7.0
+      lodash-es: 4.18.1
+      strip-json-comments: 3.1.1
+
   '@oxc-project/types@0.149.0': {}
 
   '@pkgjs/parseargs@0.11.0':
@@ -3472,16 +3481,6 @@ snapshots:
   get-tsconfig@4.14.3:
     dependencies:
       resolve-pkg-maps: 1.0.0
-
-  gherkin-lint-plus@https://codeload.github.com/StefanStuehrmann/gherkin-lint-plus/tar.gz/a3883a0aa20dae0a59e67bb2c4b95f18aa2ec867:
-    dependencies:
-      '@cucumber/gherkin': 39.1.0
-      '@cucumber/messages': 32.3.1
-      commander: 13.1.0
-      glob: 10.5.0
-      jiti: 2.7.0
-      lodash-es: 4.18.1
-      strip-json-comments: 3.1.1
 
   glob@10.5.0:
     dependencies:
